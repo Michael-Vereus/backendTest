@@ -10,9 +10,7 @@ class ItemService {
     public function run($incoData, $action){
         switch ($action) {
             case 'test':
-                echo json_encode(
-                    "OK FROM run() 505."
-                );
+                $this->test();
                 break;
             case 'touchItem':
                 $this->addItems($incoData);
@@ -25,6 +23,7 @@ class ItemService {
                 break;
             case 'nanoItem' :
                 $this->updateItems($incoData);
+                break;
             default:
                 echo json_encode(["msg" => "Unknown Action ! "]);
                 break;
@@ -40,22 +39,24 @@ class ItemService {
         if ($_SERVER['REQUEST_METHOD'] === "GET"){
             $ids = $incomingData['id'] ?? [];
 
-            if (!is_array($ids)) { $ids = [$ids];};
-            if(!empty($ids)){
+            if (!is_array($ids)) { $arrIds = [$ids];};
+            if($arrIds !==null){
                 try{
-                    $pld = str_repeat('?, ', count($ids)-1). '?';
+                    $pld = str_repeat('?, ', count($arrIds)-1). '?';
 
-                    $query = $this->pdo -> prepare("SELECT * FROM Item WHERE id in ($pld)");
+                    $query = "SELECT * FROM Item WHERE id in ($pld)";
 
-                    $query -> execute($ids);
+                    $stmt = $this->pdo -> prepare($query);
+
+                    $stmt -> execute($arrIds);
                     
-                    $result = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     echo json_encode([
                         "status" => "success",
                         "msg" =>  "Item fetched from db",
                         "items" => $result
                     ]);
-                } catch (Exception $e) {
+                } catch (PDOException $e) {
                     echo json_encode([
                         "status" => "error",
                         "msg" => $e->getMessage()
@@ -64,6 +65,8 @@ class ItemService {
             } else {
                 echo json_encode(["status" => "failed", "msg" => "ID is empty"]);
             }
+        } else {
+            echo json_encode(["msg"=> "Oi The Request Method IS WRONG!"] );
         }
     }
     public function addItems($incomingData){
@@ -86,7 +89,7 @@ class ItemService {
                     ]);
 
                     echo json_encode([
-                        "status" => "error",
+                        "status" => "success",
                         "msg" => "Successfully added Items",
                         "name_item" => $itemName
                     ]);
@@ -101,7 +104,31 @@ class ItemService {
     public function removeItems($incomingData){
         if($_SERVER['REQUEST_METHOD'] === 'DELETE'){
             $itemID = $incomingData['id'] ?? null;
-            echo json_encode(["msg" => "noice"]);
+            
+            
+            if (!is_array($itemID)) { $arrIds = [$itemID];};
+            if ($arrIds !== null){
+                try {
+
+                    $query = "DELETE FROM Item WHERE :id";
+
+                    $stmt = $this->pdo->prepare($query);
+                    $stmt -> execute($itemID);
+
+                    echo json_encode([
+                        "status" => "success",
+                        "msg" => "Item Removed from DB"
+                    ]);
+
+                } catch (PDOException $e) {
+                    echo json_encode([
+                        "status" => "error",
+                        "msg" => "db error"
+                    ]);
+                }
+            } else {
+                json_encode(["msg" => "id is null"]);
+            }
         } else {
             echo json_encode([
                 "msg" => "OY THE REQUEST METHOD DUMBASS"

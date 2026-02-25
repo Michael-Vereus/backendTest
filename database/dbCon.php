@@ -17,20 +17,20 @@ try {
     }
 
     $pdo->exec("CREATE TABLE IF NOT EXISTS Item (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY ,
         name TEXT NOT NULL,
         price INTEGER NOT NULL
     )");
 
     // 2. Bin Table (Storage Locations like 'Shelf A', 'Box 1')
     $pdo->exec("CREATE TABLE IF NOT EXISTS Bin (
-        bin_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        bin_id INTEGER PRIMARY KEY ,
         bin_name TEXT NOT NULL UNIQUE
     )");
 
     // 3. Stock Table (The "Bridge" - how many items are in which bin)
     $pdo->exec("CREATE TABLE IF NOT EXISTS Stock (
-        stock_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stock_id INTEGER PRIMARY KEY ,
         item_id INTEGER NOT NULL,
         bin_id INTEGER NOT NULL,
         quantity INTEGER DEFAULT 0,
