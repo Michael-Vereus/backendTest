@@ -30,6 +30,12 @@ switch ($whichServ) {
     case 'bin':
 
         break;
+    case 'eepy': //ignore this shi
+        echo json_encode(["msg" => "sleepy myself, ure tired ma niga"]); // also ignore
+        break;
+    default:
+        echo json_encode(["msg" => "Unknown Which?!"]);
+        break;
 }
 
 ?>

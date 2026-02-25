@@ -23,8 +23,10 @@ class ItemService {
             case 'rmItem':
                 $this->removeItems($incoData);
                 break;
+            case 'nanoItem' :
+                $this->updateItems($incoData);
             default:
-                # code...
+                echo json_encode(["msg" => "Unknown Action ! "]);
                 break;
         }
     }
@@ -104,6 +106,48 @@ class ItemService {
             echo json_encode([
                 "msg" => "OY THE REQUEST METHOD DUMBASS"
             ]);
+        }
+    }
+    public function updateItems($incomingData){
+        if($_SERVER['REQUEST_METHOD'] === 'PUT'){
+            
+            $itemID = $incomingData['id'] ;
+            $itemName = $incomingData['name'] ;
+            $itemPrice = $incomingData['price'];
+
+            if($itemID){
+
+                try {
+                    $query = $this->pdo->prepare(
+                        "UPDATE Item 
+                        SET name = :name,
+                            price = :price 
+                        WHERE id = :id");
+
+                    $query->execute([
+                        ":name" => $itemName,
+                        ":price" => $itemPrice,
+                        ":id" => $itemID
+                    ]);
+                    echo json_encode([
+                        "status" => "success",
+                        "msg" => "Updated an Item from db",
+                        "Item" => $itemName
+                    ]);
+                } catch (PDOException $e) {
+                    echo json_encode([
+                        "status" => "error",
+                        "msg" => $e->getMessage()
+                    ]);
+                }
+            } else {
+                echo json_encode([
+                    "status" => "error",
+                    "msg" => "Empty ID!"
+                ]);
+            }
+        } else {
+            echo json_encode(["msg" => "Check the Request Method Dumbass"]);
         }
     }
 }
