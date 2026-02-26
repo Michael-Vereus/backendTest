@@ -2,6 +2,7 @@
 
 require_once 'database/dbCon.php';
 require_once 'service/itemService.php';
+require_once 'repository/itemRepo.php';
 
 $incomingFile = file_get_contents('php://input');
 $incomingData = json_decode($incomingFile, true);
@@ -22,7 +23,8 @@ $itemServ = new ItemService($pdo);
 switch ($whichServ) {
 
     case 'item':
-        $itemServ->run($incomingData,$action);
+        $result = $itemServ->run($incomingData,$action);
+        echo json_encode($result);
         break;
     case 'stock':
 

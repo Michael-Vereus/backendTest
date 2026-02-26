@@ -1,77 +1,60 @@
 <?php 
-
 class ItemService {
     private $pdo;
+    private $itemRepo;
 
     public function __construct($db){
         $this->pdo = $db;
+        $this->itemRepo = new itemRepo($this->pdo);
     }
 
     public function run($incoData, $action){
         switch ($action) {
             case 'test':
-                $this->test();
+                return $this->test();
                 break;
             case 'touchItem':
-                $this->addItems($incoData);
+                return $this->addItems($incoData);
                 break;
             case 'lsItem':
-                $this->getItems($incoData);
+                return $this->getItems($incoData);
                 break;
             case 'rmItem':
-                $this->removeItems($incoData);
+                return $this->removeItems($incoData);
                 break;
             case 'nanoItem' :
-                $this->updateItems($incoData);
+                return $this->updateItems($incoData);
                 break;
             default:
-                echo json_encode(["msg" => "Unknown Action ! "]);
+                return ["msg" => "Unknown Action ! "];
                 break;
         }
     }
     public function test(){
         if ($this->pdo){
-            echo json_encode(["msg" => "hey from itemServ API"]);
+            $result = $this->itemRepo->test();
+            return (["msg" => "hey from itemServ API", "msg#2" =>$result]  );
         }
     }
 
     public function getItems($incomingData){
         if ($_SERVER['REQUEST_METHOD'] === "GET"){
             $ids = $incomingData['id'] ?? [];
-
-            if (!is_array($ids)) { $arrIds = [$ids];};
-            if($arrIds !==null){
-                try{
-                    $pld = str_repeat('?, ', count($arrIds)-1). '?';
-
-                    $query = "SELECT * FROM Item WHERE id in ($pld)";
-
-                    $stmt = $this->pdo -> prepare($query);
-
-                    $stmt -> execute($arrIds);
-                    
-                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    echo json_encode([
-                        "status" => "success",
-                        "msg" =>  "Item fetched from db",
-                        "items" => $result
-                    ]);
-                } catch (PDOException $e) {
-                    echo json_encode([
-                        "status" => "error",
-                        "msg" => $e->getMessage()
-                    ]);
-                }
-            } else {
-                echo json_encode(["status" => "failed", "msg" => "ID is empty"]);
-            }
+            
+            $result = $this->itemRepo->fetch($ids);
+            return ["msg" => "success", "result" => $result];
         } else {
-            echo json_encode(["msg"=> "Oi The Request Method IS WRONG!"] );
+            return (["msg"=> "Oi The Request Method IS WRONG!"] );
         }
     }
     public function addItems($incomingData){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            
+            $result = $this->itemRepo->save();
 
+            return $result;
+            
+            /*
             $itemName = $incomingData['name'];
             $itemPrice = $incomingData['price'];
 
@@ -96,9 +79,9 @@ class ItemService {
                 } catch (PDOException $e) {
                     echo json_encode(["status" => "error", "msg" => $e->getMessage()]);
                 }
-            }
+            } */
         } else{
-            echo json_encode(["msg" => "WRONG METHOD DUMBASS"]);
+            return (["msg" => "WRONG METHOD DUMBASS"]);
         }
     }
     public function removeItems($incomingData){

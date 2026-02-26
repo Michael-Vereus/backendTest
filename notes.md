@@ -5,3 +5,8 @@ Patch 2.25.21.01 :
 - Changes action in Case 'Test' ( itemService )
 - Added removeItem() in itemsService
 - fixed few code in itemServ
+
+patch 2.25.23.15 : 
+- Note to self change to decoupled desig
+- Created repository folder for handling interactions and database 
+- Created Model for entity modelling and data consistency
