@@ -16,3 +16,8 @@ Patch 2.27.14.30 :
 - Input normalization
 - Completed All error Handling on all C R U D 
 - Implemented Upsert Logic
+
+Small Patch 2.27.15.13 : 
+- Starter progres on Bin module
+- Added binService and binRepository
+- Ran a test, returns '200 OK'
