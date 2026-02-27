@@ -6,7 +6,13 @@ Patch 2.25.21.01 :
 - Added removeItem() in itemsService
 - fixed few code in itemServ
 
-patch 2.25.23.15 : 
+Patch 2.25.23.15 : 
 - Note to self change to decoupled desig
 - Created repository folder for handling interactions and database 
 - Created Model for entity modelling and data consistency
+
+Patch 2.27.14.30 : 
+- Completed CRUD for Item module
+- Input normalization
+- Completed All error Handling on all C R U D 
+- Implemented Upsert Logic

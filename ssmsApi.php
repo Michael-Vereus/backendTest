@@ -3,6 +3,9 @@
 require_once 'database/dbCon.php';
 require_once 'service/itemService.php';
 require_once 'repository/itemRepo.php';
+require_once 'model/itemEntity.php';
+
+
 
 $incomingFile = file_get_contents('php://input');
 $incomingData = json_decode($incomingFile, true);
