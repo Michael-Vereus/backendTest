@@ -1,5 +1,6 @@
 <?php 
 
+require_once 'masterCont.php';
 require_once 'database/dbCon.php';
 require_once 'service/itemService.php';
 require_once 'service/binService.php';
@@ -24,6 +25,7 @@ $whichServ = $incomingData["which"];
 
 $itemServ = new ItemService($pdo);
 $binServ = new BinService($pdo);
+$mc = new MasterCont($pdo);
 
 switch ($whichServ) {
 
@@ -40,6 +42,10 @@ switch ($whichServ) {
     case 'eepy': //ignore this shi
         echo json_encode([
             "msg" => "sleepy myself, ure tired ma niga"]); // also ignore
+        break;
+    case 'mc' :
+        $result = $mc->run(); // master Cont
+        echo json_encode($result);
         break;
     default:
         echo json_encode(["msg" => "Unknown Which?!"]);

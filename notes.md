@@ -21,3 +21,6 @@ Small Patch 2.27.15.13 :
 - Starter progres on Bin module
 - Added binService and binRepository
 - Ran a test, returns '200 OK'
+
+Small Patch 2.27.19.25 : 
+- Added masterCont module for accessing db directly will be removed before going public 
