@@ -7,6 +7,7 @@ require_once 'service/binService.php';
 require_once 'repository/itemRepo.php';
 require_once 'repository/binRepo.php';
 require_once 'model/itemEntity.php';
+require_once 'model/binEntity.php';
 
 
 $incomingFile = file_get_contents('php://input');

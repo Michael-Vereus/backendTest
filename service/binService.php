@@ -1,12 +1,10 @@
 <?php 
 
 class BinService{
-    private $pdo;
     private $binRepo;
 
     public function __construct($pdo) {
-        $this->pdo = $pdo;
-        $this->binRepo = new BinRepo();
+        $this->binRepo = new BinRepo($pdo);
     }
 
     public function run($incomingData,$action){
@@ -15,9 +13,11 @@ class BinService{
             case 'test':
                 return $this->test();
                 break;
-            
+            case 'lsBin':
+                return $this->getBin($incomingData);
+                break;
             default:
-                # code...
+                return ["msg" => "OI WRONG ACTION TYPE BRBUH"];
                 break;
         }
     }
@@ -27,6 +27,14 @@ class BinService{
             "debug" => $this->binRepo->test()
         ];
 
+    }
+    public function getBin($incomingData){
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $ids = $incomingData['id'] ?? [];
+            return $this->binRepo->fetch($ids);
+        } else {
+            return ["msg" => "wrong req method dumbass"];
+        }
     }
 }
 

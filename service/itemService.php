@@ -1,11 +1,9 @@
 <?php 
 class ItemService {
-    private $pdo;
     private $itemRepo;
 
-    public function __construct($db){
-        $this->pdo = $db;
-        $this->itemRepo = new itemRepo($this->pdo);
+    public function __construct($pdo){
+        $this->itemRepo = new itemRepo($pdo);
     }
 
     public function run($incoData, $action){
@@ -31,10 +29,8 @@ class ItemService {
         }
     }
     public function test(){
-        if ($this->pdo){
-            $result = $this->itemRepo->test();
-            return (["msg" => "hey from itemServ API", "msg#2" =>$result]  );
-        }
+        $result = $this->itemRepo->test();
+        return (["msg" => "hey from itemServ API", "msg#2" =>$result]  );
     }
 
     public function getItems($incomingData){
@@ -50,8 +46,12 @@ class ItemService {
     public function addItems($incomingData){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             
+            $newItem = new itemEntity(
+                $incomingData['id'],
+                $incomingData['name'],
+                $incomingData['price']
+            );
 
-            $newItem = new itemEntity($incomingData['id'],$incomingData['name'],$incomingData['price']);
             $result = $this->itemRepo->save($newItem);
 
             return $result;
