@@ -25,6 +25,13 @@ class BinEntity implements JsonSerializable{
             'binCapacity' => $this->binCapacity
         ];
     }
+    public function getForDB(){
+        return [
+            "binId"=>$this->binId,
+            "binName"=>$this->binName, 
+            "Capacity"=>$this->binCapacity
+        ];
+    }
 }
 
 ?>

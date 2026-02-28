@@ -46,16 +46,25 @@ class BinRepo{
     } // fetch item 
     public function save(BinEntity $binItem){
         try {
-            $result = ["test Save func"] ;
+            $query = "INSERT INTO Bin 
+                VALUES (:binId, :binName, :Capacity)
+                ON CONFLICT(binId)
+                DO UPDATE SET 
+                    binName = excluded.binName,
+                    Capacity = excluded.Capacity";
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($binItem->getForDB());
+            $result = ["status"=>"success","msg"=>"OK 505 SAVED TO DB"] ;
             return $result;
         } catch (PDOException $e) {
             return [
+                "status"=>"err",
                 "msg"=>"dbError",
                 "error_type" => get_class($e),
                 "message" => $e->getMessage(),
                 "file" => $e->getFile(),
                 "line" => $e->getLine()
-            ]; 
+            ];
         }
     }
 }

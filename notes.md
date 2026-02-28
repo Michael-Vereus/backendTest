@@ -41,3 +41,9 @@ Smoll Patch 2.27.22.13 :
 Patch 2.28.14.50 : 
 - Finished getBin functionality
 - Started on save functionality
+
+Patch 2.28.19.40 : 
+- added fun in binEntity to obj att for DB 
+- started and finished making the save module in Bin Repo
+- 2 out of 4 module in Bin
+- as always added safety nets(trycatch) and ifelse to catch an error 
