@@ -47,3 +47,15 @@ Patch 2.28.19.40 :
 - started and finished making the save module in Bin Repo
 - 2 out of 4 module in Bin
 - as always added safety nets(trycatch) and ifelse to catch an error 
+
+Smoll Patch 3.1.17.30 : 
+- Found a bug on binRepo code specifically fetch functiion
+Where $binFetched wont create new objects. Need further investigation
+
+Smoll Patch 3.1.17.38 :
+- Fixed bug on binRepo turns out foreach used wrong variables.
+Should've used $result but instead used $binFetched.
+
+Patch 3.1.20.40 : 
+- Finished creating all CRUD module for BIN.
+- Preping creating CRUD module for Stock
