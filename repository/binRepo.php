@@ -3,7 +3,7 @@
 class BinRepo{
     private $pdo;
 
-    public function __construct($pdo) {
+    public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
     }
 
@@ -11,7 +11,7 @@ class BinRepo{
         $testBin = new BinEntity(1,2,3);
         return ["msg#2" => "Hey From BinRepo", "msg#3" => $testBin->test()];
     }
-    public function fetch($ids){
+    public function fetch($ids): array{
         $arrIDs = is_array($ids) ? $ids : [$ids];
         if(!empty($arrIDs)){
             $placeholder = str_repeat('?, ', count($ids)-1). '?';

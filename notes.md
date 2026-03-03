@@ -59,3 +59,21 @@ Should've used $result but instead used $binFetched.
 Patch 3.1.20.40 : 
 - Finished creating all CRUD module for BIN.
 - Preping creating CRUD module for Stock
+
+Patch 3.2.17.35 : 
+- Started creating CRUD module for Stock
+- Finished READ module for stock.
+- Implementing type hinting for eaiser readability and maintainablity
+- Fixing return message to be more consistent across 
+
+Patch 3.2.19.40 : 
+- Tried a different approach for generating ID's in stockId
+- fixed item collumn naming to have 'item' in it
+- adjusted the Item CRUD Module in order to prevent errors in the future.
+- implemented jsonSerializable on stockEntity
+
+Patch 3.3.22.15 : 
+- Created class for dbCon, for modularity
+- Removed dbCon.php added dbConn.php
+- Tried interface for all three repos but dropped it felt necessary for this scale. 
+- In progress of adding http resposes code in every return statement from repo

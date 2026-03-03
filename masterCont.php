@@ -18,8 +18,9 @@ class MasterCont{
 
         try {
             $stmt = $this->pdo->prepare(
-            "ALTER TABLE Stock 
-            RENAME COLUMN bin_id TO binId");
+            "ALTER TABLE  
+            RENAME COLUMN price TO itemPrice"
+            );
 
             $stmt->execute();
 
