@@ -20,7 +20,7 @@ class StockEntity implements JsonSerializable{
     public function jsonSerialize(){
         return [
             "stockId"=>$this->stockId,
-            "binId"=>$this->binId,
+            "binid"=>$this->binId,
             "itemId"=>$this->itemId,
             "quantity"=>$this->quantity
         ];
@@ -28,8 +28,8 @@ class StockEntity implements JsonSerializable{
     public function getForDB(): array{
         return [
             "stockId"=>$this->stockId,
-            "binId"=>$this->binId,
             "itemId"=>$this->itemId,
+            "binid"=>$this->binId,
             "quantity"=>$this->quantity
         ];
     }

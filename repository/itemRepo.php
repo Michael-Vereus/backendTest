@@ -26,8 +26,8 @@ class itemRepo{
                 $itemFetched = [];
                 foreach ($result as $item){
                     $itemFetched[] = new itemEntity(
-                        $item['id'],
-                        $item['name'],
+                        $item['itemId'],
+                        $item['itemName'],
                         $item['price']
                     );
                 }
@@ -47,22 +47,29 @@ class itemRepo{
     public function save(itemEntity $item){
         
         try {
-            $query = "INSERT INTO Item 
-                VALUES (:id,:name, :price)
-                ON CONFLICT(id)
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO Item 
+                VALUES (:itemId, :itemName, :price)
+                ON CONFLICT(itemId)
                 DO UPDATE SET 
-                    name = excluded.name,
-                    price = excluded.price";
-            $stmt = $this->pdo->prepare($query);
+                    itemName = excluded.itemName,
+                    price = excluded.price"
+            );
             $result =$stmt->execute([
-                ':id' => $item->getId(),
-                ':name' => $item->getName(),
+                ':itemId' => $item->getId(),
+                ':itemName' => $item->getName(),
                 ':price' => $item->getPrice()
             ]); 
 
             return ["msg" => "item received", "item" => $item->getName()];
         } catch (PDOException $e) {
-            return ["msg" => "err", "debug" => "dbError"];
+            return [
+                "msg"=>"dbError",
+                "error_type" => get_class($e),
+                "message" => $e->getMessage(),
+                "file" => $e->getFile(),
+                "line" => $e->getLine()
+            ];
         }        
     }
     

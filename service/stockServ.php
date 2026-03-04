@@ -17,6 +17,8 @@ class StockServ{
             case 'touchStock':
                 return $this->addStock($incomingData);
                 break;
+            case 'rmStock' : 
+                return $this->removeStock($incomingData);
             default:
                 return ["msg"=>"Unknown Action Type"];
                 break;
@@ -47,6 +49,15 @@ class StockServ{
             return $result;
         } else {
             return ["msg"=>"wrong"];
+        }
+    }
+    public function removeStock($incomingData): array{
+        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+            $ids = $incomingData['stockId'] ?? [];
+            $result = $this->stockRepo->deleteById($ids);
+            return $result;
+        } else {
+            return [];
         }
     }
 }

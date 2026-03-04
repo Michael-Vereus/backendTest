@@ -77,3 +77,9 @@ Patch 3.3.22.15 :
 - Removed dbCon.php added dbConn.php
 - Tried interface for all three repos but dropped it felt necessary for this scale. 
 - In progress of adding http resposes code in every return statement from repo
+
+Patch 3.4.14.10 : 
+- Completed all CRUD Module
+- Need a lot of polishing tho in all of module, will complete it it 2 days from now.
+- Sketching a Min Max feature into the system (hopes it run)
+- This patch only notes the completion of all CRUD module not the polished version !

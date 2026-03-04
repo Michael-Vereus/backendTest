@@ -31,8 +31,11 @@ class StockRepo{
                 );
             }
             if (empty($stockFetched)){
-                http_response_code(204);
-                return ["msg"=>"no stock found !"];
+                http_response_code(200);
+                return [
+                    "status"=>true,
+                    "msg"=>"Stock with that ID doesn't exist !"
+                ];
             }
             http_response_code(200);
             return ["status"=>true, "result"=>$stockFetched];
@@ -45,15 +48,28 @@ class StockRepo{
         try {
             $query = $this->pdo->prepare(
                 "INSERT INTO Stock
-                VALUES (:stockId, :binId, :itemId, :quantity)
+                VALUES (:stockId, :itemId, :binid, :quantity)
                 ON CONFLICT(stockId)
                 DO UPDATE SET 
-                    binId = excluded.binId,
                     itemId = excluded.itemId,
+                    binid = excluded.binid,
                     quantity = excluded.quantity"
             );
 
-            $query->execute($newStock->getForDB());
+            /*$data = $newStock->getForDB();
+            echo "<pre>";
+            print_r($data);
+            echo "</pre>";
+            die(); */
+            $data = $newStock->getForDB();
+
+            // Clean newlines from keys
+            $cleanData = [];
+            foreach ($data as $key => $value) {
+                $cleanData[trim($key)] = $value;
+            }
+
+            $query->execute($cleanData);
             http_response_code(201);
             return ["msg"=>$newStock->getForDB()];
         } catch (PDOException $e) {
@@ -71,9 +87,32 @@ class StockRepo{
         $arrId = is_array($ids) ? $ids : [$ids];
         if (empty($arrId)){ http_response_code(400);}
         try {
+            $placeholder = str_repeat("?, ", count($arrId)-1) . " ?";
 
+            $query = $this->pdo->prepare(
+                "DELETE FROM Stock
+                WHERE stockId IN ($placeholder)");
+
+            $query->execute($arrId);
+            
+            $result = $query->rowCount();
+            if ($result === 0) {
+                http_response_code(200);
+                return [
+                    "status"=>true,
+                    "msg"=>"Stock doesn't exist to be deleted"
+                ];
+            };
+            $requested = count($arrId);
+            return [
+                "status"=>true,
+                "msg"=> $result." out of ".$requested ." Stock has been deleted"
+            ];
         } catch (PDOException $e){
-
+            return [
+                "status"=>false, 
+                "msg"=>"Failed to process, dbError"
+            ];
         }
     }
     

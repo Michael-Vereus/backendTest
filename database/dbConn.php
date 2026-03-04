@@ -8,6 +8,7 @@ class dbConec{
             $this->pdo = new PDO('sqlite:'. $dbPath);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
+            $this->pdo->exec("PRAGMA foreign_keys = ON;");
             $this->initTables();
         } catch(PDOException $e){
             header('Content-Type: application/json');
@@ -29,12 +30,12 @@ class dbConec{
 
         $this->pdo->exec("CREATE TABLE IF NOT EXISTS Bin (
             binid VARCHAR(10) PRIMARY KEY ,
-            binName TEXT NOT NULL UNIQUE, 
+            binName TEXT NOT NULL, 
             Capacity INTEGER 
         )");
 
         $this->pdo->exec("CREATE TABLE IF NOT EXISTS Stock (
-            stockId VARCHAR(10) PRIMARY KEY ,
+            stockId VARCHAR(10) PRIMARY KEY,
             itemId VARCHAR(10) NOT NULL,
             binId VARCHAR(10) NOT NULL,
             quantity INTEGER DEFAULT 0,
