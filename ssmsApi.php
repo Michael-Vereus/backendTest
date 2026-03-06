@@ -29,6 +29,7 @@ $incomingFile = file_get_contents('php://input');
 $incomingData = json_decode($incomingFile, true);
 
 if(!$incomingData){
+    http_response_code(400);
     echo json_encode([
         "debug_error" => "err check JSON for typos",
         "rawDat" => $incomingData

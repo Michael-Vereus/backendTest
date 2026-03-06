@@ -11,40 +11,44 @@ class itemRepo{
         
         return ["msg" => "hay from itemRepo"];
     }
-    public function fetch($ids){
+    public function fetch(array $requestedIds): array{ // param array of rere$requestedIds then return an array of objects (item entity)
 
-        $arrIds = is_array($ids) ? $ids : [$ids];
-        if (!empty($arrIds)){
-            try {
-                $placeholder = str_repeat('?, ', count($ids)-1). '?';
+        $arrIds = is_array($requestedIds) ? $requestedIds : [$requestedIds]; //check if its an array or not.
 
-                $query = "SELECT * FROM Item WHERE id in ($placeholder)";
-                $stmt = $this->pdo->prepare($query);
-                $stmt->execute($arrIds);
-                
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $itemFetched = [];
-                foreach ($result as $item){
-                    $itemFetched[] = new itemEntity(
-                        $item['itemId'],
-                        $item['itemName'],
-                        $item['price']
-                    );
-                }
-                if (empty($itemFetched)) {
-                    return ["msg" => "No items found matching the provided ID(s)."];
-                }
-                return $itemFetched;
+        if (empty($arrIds)){ return ["msg" => "ID's are empty"];} //
 
-            } catch (PDOException $e) {
-                return ["msg" => "dbError check query"];
+        try {
+            $placeholder = str_repeat('?, ', count($requestedIds)-1). '?';
+
+            $stmt = $this->pdo->prepare(
+                "SELECT * FROM Item 
+                WHERE itemId in ($placeholder)"
+            );
+            $stmt->execute($arrIds);
+            
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $itemFetched = [];
+            foreach ($result as $item){
+                $itemFetched[] = new itemEntity(
+                    $item['itemId'],
+                    $item['itemName'],
+                    $item['price']
+                );
             }
-        } else {
-            return ["msg" => "empty id or not exist in db"];
-        } 
-    } // get Item based on Id's it can be either a single id or an arrays of id
+            $msg = "Item fetched!";
+            if (empty($itemFetched)) {$msg = "No such ID EXIST!";}
+                
+            return [
+                "status"=>"success",
+                "msg"=>$msg,
+                "item" => $itemFetched];
 
-    public function save(itemEntity $item){
+        } catch (PDOException $e) {
+            return ["msg" => "dbError check query"];
+        }
+    }
+
+    public function save(itemEntity $item): array{ // param get an item entity then return the result in array
         
         try {
             $stmt = $this->pdo->prepare(
@@ -55,57 +59,49 @@ class itemRepo{
                     itemName = excluded.itemName,
                     price = excluded.price"
             );
-            $result =$stmt->execute([
-                ':itemId' => $item->getId(),
-                ':itemName' => $item->getName(),
-                ':price' => $item->getPrice()
-            ]); 
 
-            return ["msg" => "item received", "item" => $item->getName()];
+            $stmt->execute($item->getForDb()); 
+
+            return [
+                "status"=>"success",
+                "msg" => "item received"
+            ];
         } catch (PDOException $e) {
             return [
-                "msg"=>"dbError",
-                "error_type" => get_class($e),
-                "message" => $e->getMessage(),
-                "file" => $e->getFile(),
-                "line" => $e->getLine()
+                "status"=>"err",
+                "msg"=>"dbErr check query"
             ];
         }        
     }
     
-    public function deleteById($ids){
+    public function deleteById($ids): array{ //deleting a batch of item rows using the ids then return array
 
         
         $arrIds = is_array($ids) ? $ids : [$ids];
 
-        if(!empty($arrIds)){
-            try {
-                $placeholder = str_repeat('?, ', count($ids)-1). '?';
-                $query = "DELETE FROM Item 
-                    WHERE id IN ($placeholder)";
-                $stmt = $this->pdo->prepare($query);
-                $stmt->execute($arrIds);
+        if(empty($arrIds)){return ["msg"=>"ID is empty!"];};
+        try {
+            $placeholder = str_repeat('?, ', count($ids)-1). '?';
+            $query = "DELETE FROM Item 
+                WHERE id IN ($placeholder)";
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($arrIds);
 
-                $deletedCount = $stmt->rowCount();
-                $requestedCount = count($arrIds);
-
-                if ($deletedCount === 0) {
-                    return [
-                        "status" => "error",
-                        "msg" => "No items were found to delete."
-                    ];
-                }
-
-                return [
-                    "status" => "success",
-                    "msg" => "Deleted $deletedCount out of $requestedCount requested items."
-                ];
+            $deletedCount = $stmt->rowCount();
+            $requestedCount = count($arrIds);
+            
+            $msg = "Deleted $deletedCount out of $requestedCount requested items.";
+            if ($deletedCount === 0) {
+                $msg = "No such ID Exist";
             }
-            catch(PDOException $e){
 
-            }
-        } else {
-            return ["msg" => "empty ID."];
+            return [
+                "status" => "success",
+                "msg" => $msg
+            ];
+        }
+        catch(PDOException $e){
+            return ["msg"=>"dbError check query"];
         }
         
     }

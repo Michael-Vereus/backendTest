@@ -83,3 +83,16 @@ Patch 3.4.14.10 :
 - Need a lot of polishing tho in all of module, will complete it it 2 days from now.
 - Sketching a Min Max feature into the system (hopes it run)
 - This patch only notes the completion of all CRUD module not the polished version !
+
+Smoll Patch 3.6.6.6 : 
+- fixed a few error in itemRepo
+- fixed the naming incosistency in itemRepo
+
+Smoll Patch 3.6.11.30 : 
+- fixed crd module in Item.
+- found a bug or a problem in update. When user or incoming json doesnt contain the same id it automatically insert instead of update due to in itemRepo using UPSERT logic combining the two. Need to validate an ID if exist or not.
+- Solved inconsistency problem return array itemRepo.
+
+
+#note to self : 
+- add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing

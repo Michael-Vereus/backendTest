@@ -46,6 +46,7 @@ class StockRepo{
 
     public function save(StockEntity $newStock):array{
         try {
+
             $query = $this->pdo->prepare(
                 "INSERT INTO Stock
                 VALUES (:stockId, :itemId, :binid, :quantity)
@@ -56,23 +57,11 @@ class StockRepo{
                     quantity = excluded.quantity"
             );
 
-            /*$data = $newStock->getForDB();
-            echo "<pre>";
-            print_r($data);
-            echo "</pre>";
-            die(); */
-            $data = $newStock->getForDB();
-
-            // Clean newlines from keys
-            $cleanData = [];
-            foreach ($data as $key => $value) {
-                $cleanData[trim($key)] = $value;
-            }
-
-            $query->execute($cleanData);
+            $query->execute($newStock->getForDB());
             http_response_code(201);
             return ["msg"=>$newStock->getForDB()];
         } catch (PDOException $e) {
+            http_response_code(500);
             return [
                 "msg"=>"dbError",
                 "error_type" => get_class($e),
@@ -96,8 +85,8 @@ class StockRepo{
             $query->execute($arrId);
             
             $result = $query->rowCount();
+            http_response_code(200);
             if ($result === 0) {
-                http_response_code(200);
                 return [
                     "status"=>true,
                     "msg"=>"Stock doesn't exist to be deleted"
@@ -109,6 +98,7 @@ class StockRepo{
                 "msg"=> $result." out of ".$requested ." Stock has been deleted"
             ];
         } catch (PDOException $e){
+            http_response_code(500);
             return [
                 "status"=>false, 
                 "msg"=>"Failed to process, dbError"

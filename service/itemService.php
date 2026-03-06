@@ -38,7 +38,7 @@ class ItemService {
             $ids = $incomingData['id'] ?? [];
             
             $result = $this->itemRepo->fetch($ids);
-            return ["msg" => "success", "result" => $result];
+            return $result;
         } else {
             return (["msg"=> "Oi The Request Method IS WRONG!"] );
         }

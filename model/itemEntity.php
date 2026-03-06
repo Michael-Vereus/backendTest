@@ -15,16 +15,6 @@ class itemEntity implements JsonSerializable {
         $itemId = bin2hex(random_bytes(4));
         return $itemId;
     }
-
-    public function getId(){
-        return $this->id;
-    }
-    public function getName(){
-        return $this->name;
-    }
-    public function getPrice(){
-        return $this->price;
-    }
     public function jsonSerialize(){
         return [
             'id' => $this->id,
@@ -32,6 +22,14 @@ class itemEntity implements JsonSerializable {
             'price' => $this->price
         ];
     }
+    public function getForDb(){
+        return [
+            "itemId"=>$this->id,
+            "itemName"=>$this->name,
+            "price"=>$this->price
+        ];
+    }
+    
 
 }
 
