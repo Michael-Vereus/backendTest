@@ -1,6 +1,6 @@
 <?php 
 
-class itemRepo{
+class itemRepo extends BaseRepo{
     private $pdo;
 
     public function __construct($db) {
@@ -53,7 +53,7 @@ class itemRepo{
 
             $stmt->execute($item->getForDb()); 
 
-            return true;
+            return $this->rowAffected($stmt);
         } catch (PDOException $e) {
             return false;
         }        
@@ -70,24 +70,13 @@ class itemRepo{
                 WHERE itemId IN ($placeholder)");
             $stmt->execute($arrIds);
 
-            return $this->rowChange($stmt);
+            return $this->rowAffected($stmt);
         }
         catch(PDOException $e){
             return false;
         }
 
     } 
-
-
-    // private helper function for this class
-    private function createPlaceholder(array $times):string{ // placeholder for query, prevents SQL Injection
-        return str_repeat('?, ', count($times)-1). '?';
-    }
-    private function rowChange(PDOStatement $query): bool{ // check if theres rowChange and return a bool
-        $affectedRow = $query->rowCount();
-        if($affectedRow === 0){return false;}
-        return true;
-    }
 }
 
 ?>

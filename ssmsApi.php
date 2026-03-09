@@ -7,6 +7,7 @@ require_once 'database/dbConn.php';
 require_once 'service/itemService.php';
 require_once 'service/binService.php';
 require_once 'service/stockServ.php';
+require_once 'repository/baseRepo.php';
 require_once 'repository/itemRepo.php';
 require_once 'repository/binRepo.php';
 require_once 'repository/stockRepo.php';

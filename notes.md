@@ -105,5 +105,9 @@ Refactor Patch 3.9.16.15 :
 - Added a private function to create itemENtity in itemService
 
 
+Smoll Patch 3.9.19.45 : 
+- Had and idea on interface base repo, scrapped it changed it to a abstract baseRepo :/
+- Added a baseRepo abstract, implementing DRY ( Don't Repeat Yourself)
+
 #note to self : 
 - add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing
