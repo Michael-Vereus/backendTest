@@ -93,6 +93,17 @@ Smoll Patch 3.6.11.30 :
 - found a bug or a problem in update. When user or incoming json doesnt contain the same id it automatically insert instead of update due to in itemRepo using UPSERT logic combining the two. Need to validate an ID if exist or not.
 - Solved inconsistency problem return array itemRepo.
 
+Refactor Patch 3.9.16.15 : 
+- Refactored itemRepo class by : 
+    - Removing duplicate logics
+    - Added a private helper to create placeholder 
+    - Added a function to detect affectedRow in db
+    - Chaned the return concept from returning the whole array to just return the stuff are ordered to do.
+
+    - Changed the concept thinking so the ssmsApi should do the array JSON structuring not itemRepo nor itemService
+- fixed a few typos in itemService
+- Added a private function to create itemENtity in itemService
+
 
 #note to self : 
 - add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing

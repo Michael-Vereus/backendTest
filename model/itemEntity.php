@@ -5,9 +5,9 @@ class itemEntity implements JsonSerializable {
     private $name;
     private $price;
 
-    public function __construct($id,$name, $price) {
+    public function __construct($id,$inName, $price) {
         $this->id = $id ?? $this->calculateId();
-        $this->name = $name;
+        $this->name = $inName;
         $this->price = $price;
     }
 

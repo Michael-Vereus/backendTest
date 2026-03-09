@@ -35,51 +35,59 @@ class ItemService {
 
     public function getItems($incomingData){
         if ($_SERVER['REQUEST_METHOD'] === "GET"){
-            $ids = $incomingData['id'] ?? [];
-            
-            $result = $this->itemRepo->fetch($ids);
+            $ids = $incomingData['itemId'] ?? []; // get the id from array
+            //check if its an array or not.
+            $arrIds = is_array($ids) ? $ids : [$ids]; 
+
+            $result = $this->itemRepo->fetch($arrIds);
             return $result;
         } else {
-            return (["msg"=> "Oi The Request Method IS WRONG!"] );
+            http_response_code(405);
+            return (["msg"=> "Wrong Request Method"] );
         }
     }
     public function addItems($incomingData){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             
-            $newItem = new itemEntity(
-                $incomingData['id'],
-                $incomingData['name'],
-                $incomingData['price']
-            );
+            $newItem = $this->createItem($incomingData);
 
             $result = $this->itemRepo->save($newItem);
-
             return $result;
         } else{
-            return (["msg" => "WRONG METHOD DUMBASS"]);
+            http_response_code(405);
+            return (["msg"=> "Wrong Request Method"] );
         }
     }
     public function removeItems($incomingData){
         if($_SERVER['REQUEST_METHOD'] === 'DELETE'){
             
-            $ids = $incomingData['id'] ?? null;
+            $ids = $incomingData['itemId'] ?? null;
 
             $result = $this->itemRepo->deleteById($ids);
             return $result;
-            
         } else {
-            return (["msg" => "OY THE REQUEST METHOD DUMBASS"]);
+            http_response_code(405);
+            return (["msg"=> "Wrong Request Method"] );
         }
     }
     public function updateItems($incomingData){
         if($_SERVER['REQUEST_METHOD'] === 'PUT'){
             
-            $newItem = new itemEntity($incomingData['id'],$incomingData['name'],$incomingData['price']);
+            $newItem = $this->createItem($incomingData);
+
             $result = $this->itemRepo->save($newItem);
             return $result;
         } else {
-            return (["msg" => "Check the Request Method Dumbass"]);
+            http_response_code(405);
+            return (["msg"=> "Wrong Request Method"] );
         }
+    }
+    private function createItem(array $incomingData): itemEntity{
+        return new itemEntity(
+            $incomingData['itemId'],
+            $incomingData['itemName'],
+            $incomingData['price']
+        );
     }
 }
 ?>

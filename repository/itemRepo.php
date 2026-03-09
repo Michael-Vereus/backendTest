@@ -7,48 +7,39 @@ class itemRepo{
         $this->pdo = $db;
     }
 
-    public function test(){
-        
-        return ["msg" => "hay from itemRepo"];
+    public function test(): bool{
+        return true;
     }
     public function fetch(array $requestedIds): array{ // param array of rere$requestedIds then return an array of objects (item entity)
+        $itemFetched = [];
 
-        $arrIds = is_array($requestedIds) ? $requestedIds : [$requestedIds]; //check if its an array or not.
-
-        if (empty($arrIds)){ return ["msg" => "ID's are empty"];} //
+        if (empty($requestedIds)){ return $itemFetched;} //
 
         try {
-            $placeholder = str_repeat('?, ', count($requestedIds)-1). '?';
+            $placeholder = $this->createPlaceholder($requestedIds);
 
             $stmt = $this->pdo->prepare(
                 "SELECT * FROM Item 
                 WHERE itemId in ($placeholder)"
             );
-            $stmt->execute($arrIds);
+            $stmt->execute($requestedIds);
             
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $itemFetched = [];
             foreach ($result as $item){
                 $itemFetched[] = new itemEntity(
                     $item['itemId'],
                     $item['itemName'],
                     $item['price']
                 );
-            }
-            $msg = "Item fetched!";
-            if (empty($itemFetched)) {$msg = "No such ID EXIST!";}
-                
-            return [
-                "status"=>"success",
-                "msg"=>$msg,
-                "item" => $itemFetched];
+            }                
+            return $itemFetched;
 
         } catch (PDOException $e) {
-            return ["msg" => "dbError check query"];
+            return $itemFetched;
         }
     }
 
-    public function save(itemEntity $item): array{ // param get an item entity then return the result in array
+    public function save(itemEntity $item): bool{ // param get an item entity then return the result in array
         
         try {
             $stmt = $this->pdo->prepare(
@@ -62,48 +53,40 @@ class itemRepo{
 
             $stmt->execute($item->getForDb()); 
 
-            return [
-                "status"=>"success",
-                "msg" => "item received"
-            ];
+            return true;
         } catch (PDOException $e) {
-            return [
-                "status"=>"err",
-                "msg"=>"dbErr check query"
-            ];
+            return false;
         }        
     }
     
-    public function deleteById($ids): array{ //deleting a batch of item rows using the ids then return array
-
-        
+    public function deleteById($ids): bool{ //deleting a batch of item rows using the ids then return array
+ 
         $arrIds = is_array($ids) ? $ids : [$ids];
 
-        if(empty($arrIds)){return ["msg"=>"ID is empty!"];};
+        if(empty($arrIds)){return false;};
         try {
-            $placeholder = str_repeat('?, ', count($ids)-1). '?';
-            $query = "DELETE FROM Item 
-                WHERE id IN ($placeholder)";
-            $stmt = $this->pdo->prepare($query);
+            $placeholder = $this->createPlaceholder($arrIds);
+            $stmt = $this->pdo->prepare("DELETE FROM Item 
+                WHERE itemId IN ($placeholder)");
             $stmt->execute($arrIds);
 
-            $deletedCount = $stmt->rowCount();
-            $requestedCount = count($arrIds);
-            
-            $msg = "Deleted $deletedCount out of $requestedCount requested items.";
-            if ($deletedCount === 0) {
-                $msg = "No such ID Exist";
-            }
-
-            return [
-                "status" => "success",
-                "msg" => $msg
-            ];
+            return $this->rowChange($stmt);
         }
         catch(PDOException $e){
-            return ["msg"=>"dbError check query"];
+            return false;
         }
-        
+
+    } 
+
+
+    // private helper function for this class
+    private function createPlaceholder(array $times):string{ // placeholder for query, prevents SQL Injection
+        return str_repeat('?, ', count($times)-1). '?';
+    }
+    private function rowChange(PDOStatement $query): bool{ // check if theres rowChange and return a bool
+        $affectedRow = $query->rowCount();
+        if($affectedRow === 0){return false;}
+        return true;
     }
 }
 
