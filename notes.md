@@ -113,5 +113,9 @@ Refactor Patch 3.10.08.35 :
 - Refactored ssmsApi ( main enty point ), divided the switch in a propietary class called apiRouter.
 - used DI by creating objects in the class itself 
 
+Smoll Refactor Patch 3.10.23.02 : 
+- Created BaseSevice abstract class to inherit some common used functions
+- Started working on cleaning up Bin service and repo will document after finished with stock too
+
 #note to self : 
 - add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing

@@ -1,5 +1,5 @@
 <?php 
-class ItemService {
+class ItemService extends BaseService{
     private $itemRepo;
 
     public function __construct($pdo){

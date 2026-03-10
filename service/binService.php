@@ -1,6 +1,6 @@
 <?php 
 
-class BinService{
+class BinService extends BaseService{
     private $binRepo;
 
     public function __construct($pdo) {
@@ -45,16 +45,12 @@ class BinService{
             $ids = $incomingData['binId'] ?? [];
             return $this->binRepo->fetch($ids);
         } else {
-            return ["msg" => "wrong req method dumbass"];
+            return $this->errorMethodHandler();
         }
     }
     public function addBin($incomingData){
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $newBin = new BinEntity(
-                $incomingData['binId'],
-                $incomingData['binName'],
-                $incomingData['Capacity']
-            );
+            $newBin = $this->createBin($incomingData);
             $result = $this->binRepo->save($newBin);
             return $result;
         } else {
@@ -71,11 +67,7 @@ class BinService{
     }
     public function updateBin($incomingData) {
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-            $newBin = new BinEntity(
-                $incomingData['binId'],
-                $incomingData['binName'],
-                $incomingData['Capacity']
-            );
+            $newBin = $this->createBin($incomingData);
             $result = $this->binRepo->save($newBin);
             return $result;
         } else {
@@ -84,6 +76,13 @@ class BinService{
                 "msg"=>"Wrong Request Method"
             ];
         }
+    }
+    private function createBin(array $incomingData):BinEntity {
+        return new BinEntity(
+            $incomingData['binId'],
+            $incomingData['binName'],
+            $incomingData['Capacity']
+        );
     }
 }
 
