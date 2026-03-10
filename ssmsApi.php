@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once 'masterCont.php';
+require_once 'apiRouter.php';
 require_once 'database/dbConn.php';
 require_once 'service/itemService.php';
 require_once 'service/binService.php';
@@ -25,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// db Connec
 $pdo = new dbConec("database/database.sqlite");
 $incomingFile = file_get_contents('php://input');
 $incomingData = json_decode($incomingFile, true);
@@ -41,36 +43,8 @@ if(!$incomingData){
 $action = $incomingData["actionType"];
 $whichServ = $incomingData["which"];
 
-$itemServ = new ItemService($pdo->getPDO());
-$binServ = new BinService($pdo->getPDO());
-$stockServ = new StockServ($pdo->getPDO());
-$mc = new MasterCont($pdo->getPDO());
-
-switch ($whichServ) {
-
-    case 'item':
-        $result = $itemServ->run($incomingData,$action);
-        echo json_encode($result);
-        break;
-    case 'stock':
-        $result = $stockServ->run($incomingData,$action);
-        echo json_encode($result);
-        break;
-    case 'bin':
-        $result = $binServ->run($incomingData,$action);
-        echo json_encode($result);
-        break;
-    case 'eepy': //ignore this shi
-        echo json_encode([
-            "msg" => "sleepy myself, ure tired ma niga"]); // also ignore
-        break;
-    case 'mc' :
-        $result = $mc->run(); // master Cont
-        echo json_encode($result);
-        break;
-    default:
-        echo json_encode(["msg" => "Unknown Which?!"]);
-        break;
-}
+$router = new ApiRouter($pdo->getPDO());
+$result = $router->handleResponse($incomingData);
+echo json_encode($result);
 
 ?>

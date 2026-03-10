@@ -109,5 +109,9 @@ Smoll Patch 3.9.19.45 :
 - Had and idea on interface base repo, scrapped it changed it to a abstract baseRepo :/
 - Added a baseRepo abstract, implementing DRY ( Don't Repeat Yourself)
 
+Refactor Patch 3.10.08.35 : 
+- Refactored ssmsApi ( main enty point ), divided the switch in a propietary class called apiRouter.
+- used DI by creating objects in the class itself 
+
 #note to self : 
 - add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing

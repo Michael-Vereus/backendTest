@@ -9,6 +9,10 @@ abstract class BaseRepo{
         if($affectedRow === 0){return false;}
         return true;
     }
+    protected function hasValue(array $checkArray):bool{
+        if(empty($checkArray)){return false;}
+        return true;
+    }
 }
 
 ?>
