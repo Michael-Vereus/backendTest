@@ -117,5 +117,11 @@ Smoll Refactor Patch 3.10.23.02 :
 - Created BaseSevice abstract class to inherit some common used functions
 - Started working on cleaning up Bin service and repo will document after finished with stock too
 
+Refactor Patch 3.11.08.20 : 
+- Added a function in baseService for return consistency
+- Added a function in baseService for checkking if a status or return type is true or false to return a string code
+- Added function to handle error method request
+
+
 #note to self : 
 - add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing

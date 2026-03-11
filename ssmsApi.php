@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once 'masterCont.php';
 require_once 'apiRouter.php';
 require_once 'database/dbConn.php';
+require_once 'service/baseService.php';
 require_once 'service/itemService.php';
 require_once 'service/binService.php';
 require_once 'service/stockServ.php';

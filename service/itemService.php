@@ -40,22 +40,29 @@ class ItemService extends BaseService{
             $arrIds = is_array($ids) ? $ids : [$ids]; 
 
             $result = $this->itemRepo->fetch($arrIds);
-            return $result;
+            $status = $this->isEmptyArray($result);
+
+            return $this->getReturnArray(
+                $status,
+                $this->isTrue($status),
+                $result
+            );
         } else {
-            http_response_code(405);
-            return (["msg"=> "Wrong Request Method"] );
+            return $this->errorMethodHandler();
         }
-    }
+    }  
     public function addItems($incomingData){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             
             $newItem = $this->createItem($incomingData);
 
             $result = $this->itemRepo->save($newItem);
-            return $result;
+            return $this->getReturnArray(
+                $result,
+                $this->isTrue($result),
+            );
         } else{
-            http_response_code(405);
-            return (["msg"=> "Wrong Request Method"] );
+            return $this->errorMethodHandler();
         }
     }
     public function removeItems($incomingData){
@@ -64,10 +71,12 @@ class ItemService extends BaseService{
             $ids = $incomingData['itemId'] ?? null;
 
             $result = $this->itemRepo->deleteById($ids);
-            return $result;
+            return $this->getReturnArray(
+                $result,
+                $this->isTrue($result)
+            );
         } else {
-            http_response_code(405);
-            return (["msg"=> "Wrong Request Method"] );
+            return $this->errorMethodHandler();
         }
     }
     public function updateItems($incomingData){
@@ -78,8 +87,7 @@ class ItemService extends BaseService{
             $result = $this->itemRepo->save($newItem);
             return $result;
         } else {
-            http_response_code(405);
-            return (["msg"=> "Wrong Request Method"] );
+            return $this->errorMethodHandler();
         }
     }
     private function createItem(array $incomingData): itemEntity{
