@@ -33,12 +33,8 @@ class BinService extends BaseService{
                 break;
         }
     }
-    private function test(){
-        return [
-            "msg" => "hey from BinServ", 
-            "debug" => $this->binRepo->test()
-        ];
-
+    private function test(): array{
+        return [$this->binRepo->test()];
     }
     public function getBin($incomingData){
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -48,13 +44,16 @@ class BinService extends BaseService{
             return $this->errorMethodHandler();
         }
     }
-    public function addBin($incomingData){
+    public function addBin($incomingData): array{
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             $newBin = $this->createBin($incomingData);
             $result = $this->binRepo->save($newBin);
-            return $result;
+            return $this->getReturnArray(
+                $result,
+                $this->isTrue($result)
+            );
         } else {
-            return ["msg"=>"check THE REQ METHOD FOR GODSAKE"];
+            return $this->errorMethodHandler();
         }
     }
     public function removeBin($incomingData){
@@ -62,14 +61,17 @@ class BinService extends BaseService{
             $ids = $incomingData['binId'] ?? [];
             return $this->binRepo->deleteById($ids);
         } else {
-            return ["msg"=>"wromg method dumbass"];
+            return $this->errorMethodHandler();
         }
     }
     public function updateBin($incomingData) {
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
             $newBin = $this->createBin($incomingData);
             $result = $this->binRepo->save($newBin);
-            return $result;
+            return $this->getReturnArray(
+                $result,
+                $this->isTrue($result)
+            );
         } else {
             return [
                 "status" => "err",

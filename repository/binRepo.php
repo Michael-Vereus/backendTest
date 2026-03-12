@@ -1,98 +1,72 @@
 <?php
 
-class BinRepo{
-    private $pdo;
+class BinRepo extends BaseRepo{
+    private $pdo ;
 
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
     }
 
-    public function test(){
-        $testBin = new BinEntity(1,2,3);
-        return ["msg#2" => "Hey From BinRepo", "msg#3" => $testBin->test()];
+    public function test(): bool{
+        return true;
     }
     public function fetch($ids): array{
-        $arrIDs = is_array($ids) ? $ids : [$ids];
-        if(!empty($arrIDs)){
-            $placeholder = str_repeat('?, ', count($ids)-1). '?';
-            
-            try {
-                $query = "SELECT * FROM Bin WHERE binId in ($placeholder)";
-                $stmt = $this->pdo->prepare($query);
-                $stmt->execute($arrIDs);
+        $binFetched = [];
 
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $binFetched = [];
-                foreach ($result as $bin) {
-                    $binFetched[] = new BinEntity(
-                        $bin['binId'],
-                        $bin['binName'],
-                        $bin['Capacity']
-                    );
-                }
-                if (empty($binFetched)) {
-                    return ["msg" => "No bins found matching the provided ID(s)."];
-                }
-                return [
-                    "msg"=>"success",
-                    "result"=>$binFetched
-                ];
-            } catch (PDOException $e) {
-                return ["msg"=>"dbError"];
+        $arrIDs = is_array($ids) ? $ids : [$ids];
+
+        if(empty($arrIDs)){return $binFetched;}
+        
+        try {
+            $placeholder = str_repeat('?, ', count($ids)-1). '?';
+
+            $stmt = $this->pdo->prepare(
+                "SELECT * FROM Bin WHERE binId in ($placeholder)"
+            );
+            $stmt->execute($arrIDs);
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($result as $bin) {
+                $binFetched[] = new BinEntity(
+                    $bin['binId'],
+                    $bin['binName'],
+                    $bin['Capacity']
+                );
             }
-        } else {
-            return ["msg"=>"No ID received"];
+            return $binFetched;
+
+        } catch (PDOException $e) {
+            return $binFetched;
         }
     } // fetch a single or batch item
-    public function save(BinEntity $binItem){
+    public function save(BinEntity $binItem): bool{
         try {
-            $query = "INSERT INTO Bin 
-                VALUES (:binId, :binName, :Capacity)
-                ON CONFLICT(binId)
+            $stmt = $this->pdo->prepare("INSERT INTO Bin 
+                VALUES (:binid, :binName, :Capacity)
+                ON CONFLICT(binid)
                 DO UPDATE SET 
                     binName = excluded.binName,
-                    Capacity = excluded.Capacity";
-            $stmt = $this->pdo->prepare($query);
+                    Capacity = excluded.Capacity"
+            );
             $stmt->execute($binItem->getForDB());
-            $result = ["status"=>"success","msg"=>"OK 505 SAVED TO DB"] ;
-            return $result;
+            return $this->rowAffected($stmt);
         } catch (PDOException $e) {
-            return [
-                "status"=>"err",
-                "msg"=>"dbError",
-                "error_type" => get_class($e),
-                "message" => $e->getMessage(),
-                "file" => $e->getFile(),
-                "line" => $e->getLine()
-            ];
+            return false;
         }
     } // save upsert item
-    public function deleteById($ids){
+    public function deleteById($ids): bool{
         $arrIds = is_array($ids) ? $ids : [$ids] ;
-        if (empty($arrIds)) {return ["status"=>"err", "msg"=>"No ID received"];}
+        if (empty($arrIds)) {return false;}
         try {
-            //placeholder for query
             $placeholder = str_repeat('?, ', count($ids)-1). '?';
-            $query = "DELETE FROM Bin
-                WHERE binId IN ($placeholder)";
-            $stmt = $this->pdo->prepare($query);
+            
+            $stmt = $this->pdo->prepare("DELETE FROM Bin
+                WHERE binId IN ($placeholder)");
             $stmt->execute($arrIds);
-            $result = [
-                "status"=>"success",
-                "msg"=>"OK 505"
-            ];
-            //check if there are any row deleted
-            if ($stmt->rowCount() === 0){return ["status"=>"success","msg"=>"No BinId Match"];};
 
-            return $result;
+            return $this->rowAffected($stmt);
         } catch (PDOException $e) {
-            return [
-                "msg"=>"dbError",
-                "error_type" => get_class($e),
-                "message" => $e->getMessage(),
-                "file" => $e->getFile(),
-                "line" => $e->getLine()
-            ];
+            return false;
         }
     } // delete can be batch or single item
 }

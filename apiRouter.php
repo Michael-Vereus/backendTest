@@ -29,7 +29,7 @@ class ApiRouter{
                     $incomingData["actionType"]
                 );
             case 'bin' : 
-                return $this->itemServ->run(
+                return $this->binServ->run(
                     $incomingData, 
                     $incomingData["actionType"]
                 );

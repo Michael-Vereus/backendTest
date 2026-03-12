@@ -58,6 +58,24 @@ class itemRepo extends BaseRepo{
             return false;
         }        
     }
+
+    public function checkId(string $id): bool{
+        try {
+            $query = $this->pdo->prepare(
+                "SELECT COUNT(itemId) FROM Item
+                WHERE itemId = :itemId"
+            );
+
+            $query->execute(['itemId' => $id]);
+
+            $count = $query->fetchColumn();
+
+            return $count > 0;
+
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
     
     public function deleteById($ids): bool{ //deleting a batch of item rows using the ids then return array
  
@@ -76,7 +94,7 @@ class itemRepo extends BaseRepo{
             return false;
         }
 
-    } 
+    }
 }
 
 ?>

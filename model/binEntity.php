@@ -11,9 +11,6 @@ class BinEntity implements JsonSerializable{
         $this->binCapacity = $binCapacity;
     }
 
-    public function test(){
-        return ["obj_msg" => "test from binEnt"];
-    }
     private function calculateId(){
         $itemId = bin2hex(random_bytes(4));
         return $itemId;
@@ -27,9 +24,9 @@ class BinEntity implements JsonSerializable{
     }
     public function getForDB(){
         return [
-            "binId"=>$this->binId,
-            "binName"=>$this->binName, 
-            "Capacity"=>$this->binCapacity
+            ":binid"=>$this->binId,
+            ":binName"=>$this->binName, 
+            ":Capacity"=>$this->binCapacity
         ];
     }
 }

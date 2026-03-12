@@ -122,6 +122,8 @@ Refactor Patch 3.11.08.20 :
 - Added a function in baseService for checkking if a status or return type is true or false to return a string code
 - Added function to handle error method request
 
+Refactor Patch 3.12.17.55 : 
+- Refactored bin Module ( service and repo ) so it has the same consistency as item module.
 
 #note to self : 
 - add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing

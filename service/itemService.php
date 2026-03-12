@@ -9,7 +9,8 @@ class ItemService extends BaseService{
     public function run($incoData, $action){
         switch ($action) {
             case 'test':
-                return $this->test();
+                // return ["ok"];
+                return ["status"=>$this->itemRepo->checkId("2762cc1b")];
                 break;
             case 'touchItem':
                 return $this->addItems($incoData);
@@ -69,7 +70,7 @@ class ItemService extends BaseService{
         if($_SERVER['REQUEST_METHOD'] === 'DELETE'){
             
             $ids = $incomingData['itemId'] ?? null;
-
+            
             $result = $this->itemRepo->deleteById($ids);
             return $this->getReturnArray(
                 $result,
@@ -79,13 +80,23 @@ class ItemService extends BaseService{
             return $this->errorMethodHandler();
         }
     }
-    public function updateItems($incomingData){
+    public function updateItems($incomingData): array{
         if($_SERVER['REQUEST_METHOD'] === 'PUT'){
-            
+            $check = $this->itemRepo->checkId($incomingData['itemId']);
+            if($check === false) {
+                return $this->getReturnArray(
+                    $check,
+                    "ID Not Exists"
+                );
+            }
             $newItem = $this->createItem($incomingData);
-
+            
             $result = $this->itemRepo->save($newItem);
-            return $result;
+
+            return $this->getReturnArray(
+                $result,
+                $this->isTrue($result)
+            );
         } else {
             return $this->errorMethodHandler();
         }
