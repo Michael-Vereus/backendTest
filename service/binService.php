@@ -36,10 +36,16 @@ class BinService extends BaseService{
     private function test(): array{
         return [$this->binRepo->test()];
     }
-    public function getBin($incomingData){
+    public function getBin($incomingData): array{
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $ids = $incomingData['binId'] ?? [];
-            return $this->binRepo->fetch($ids);
+            $result = $this->binRepo->fetch($ids);
+            $check = $this->isEmptyArray($result);
+            return $this->getReturnArray(
+                $check,
+                $this->isTrue($check),
+                $result
+            );
         } else {
             return $this->errorMethodHandler();
         }
@@ -56,16 +62,27 @@ class BinService extends BaseService{
             return $this->errorMethodHandler();
         }
     }
-    public function removeBin($incomingData){
+    public function removeBin($incomingData): array{
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             $ids = $incomingData['binId'] ?? [];
-            return $this->binRepo->deleteById($ids);
+            $result = $this->binRepo->deleteById($ids);
+            return $this->getReturnArray(
+                $result,
+                $this->isTrue($result)
+            );
         } else {
             return $this->errorMethodHandler();
         }
     }
-    public function updateBin($incomingData) {
+    public function updateBin($incomingData): array {
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            $check = $this->binRepo->checkId($incomingData['binId']);
+            if($check === false) {
+                return $this->getReturnArray(
+                    $check,
+                    "ID Not Exists"
+                );
+            }
             $newBin = $this->createBin($incomingData);
             $result = $this->binRepo->save($newBin);
             return $this->getReturnArray(
@@ -73,10 +90,7 @@ class BinService extends BaseService{
                 $this->isTrue($result)
             );
         } else {
-            return [
-                "status" => "err",
-                "msg"=>"Wrong Request Method"
-            ];
+            return $this->errorMethodHandler();
         }
     }
     private function createBin(array $incomingData):BinEntity {

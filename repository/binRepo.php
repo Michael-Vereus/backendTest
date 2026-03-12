@@ -68,7 +68,25 @@ class BinRepo extends BaseRepo{
         } catch (PDOException $e) {
             return false;
         }
-    } // delete can be batch or single item
+    }
+     // delete can be batch or single item
+    public function checkId(string $id): bool{
+        try {
+            $query = $this->pdo->prepare(
+                "SELECT COUNT(binid) FROM Bin
+                WHERE binid = :binid"
+            );
+
+            $query->execute(['bind' => $id]);
+
+            $count = $query->fetchColumn();
+
+            return $count > 0;
+
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
 
 ?>
