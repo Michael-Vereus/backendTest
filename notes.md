@@ -128,5 +128,11 @@ Refactor Patch 3.12.17.55 :
 Smoll Refactor Patch 3.12.23.52 : 
 - fixed some bugs and typos on bin Service
 - Added checkId() before updating an item to prevent the creation of another item.
+
+Refactor Patch 3.15.08.25 : 
+- Finished refactoring all module.
+- Closing this project for now and till indefinite future.
+
+
 #note to self : 
-- add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing
+( DONE ) add checker or id checker when updating, so the user dont create new items when updating. need to ensure even if the user ask many value to check at once it could still run wo crashing 

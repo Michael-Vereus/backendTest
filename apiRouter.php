@@ -24,7 +24,7 @@ class ApiRouter{
                     $incomingData["actionType"]
                 );
             case 'stock' : 
-            return $this->itemServ->run(
+            return $this->stockServ->run(
                     $incomingData, 
                     $incomingData["actionType"]
                 );

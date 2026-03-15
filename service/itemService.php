@@ -10,7 +10,7 @@ class ItemService extends BaseService{
         switch ($action) {
             case 'test':
                 // return ["ok"];
-                return ["status"=>$this->itemRepo->checkId("2762cc1b")];
+                return $this->test();
                 break;
             case 'touchItem':
                 return $this->addItems($incoData);
@@ -25,16 +25,19 @@ class ItemService extends BaseService{
                 return $this->updateItems($incoData);
                 break;
             default:
-                return ["msg" => "Unknown Action ! "];
+                return $this->returnUnknownAction($action);
                 break;
         }
     }
     public function test(){
         $result = $this->itemRepo->test();
-        return (["msg" => "hey from itemServ API", "msg#2" =>$result]  );
+        return $this->getReturnArray(
+            $result,
+            $this->isTrue($result)
+        );
     }
 
-    public function getItems($incomingData){
+    public function getItems($incomingData): array{
         if ($_SERVER['REQUEST_METHOD'] === "GET"){
             $ids = $incomingData['itemId'] ?? []; // get the id from array
             //check if its an array or not.
@@ -52,10 +55,10 @@ class ItemService extends BaseService{
             return $this->errorMethodHandler();
         }
     }  
-    public function addItems($incomingData){
+    public function addItems($incomingData): array{
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             
-            $newItem = $this->createItem($incomingData);
+            $newItem = $this->createObj($incomingData);
 
             $result = $this->itemRepo->save($newItem);
             return $this->getReturnArray(
@@ -66,7 +69,7 @@ class ItemService extends BaseService{
             return $this->errorMethodHandler();
         }
     }
-    public function removeItems($incomingData){
+    public function removeItems($incomingData): array{
         if($_SERVER['REQUEST_METHOD'] === 'DELETE'){
             
             $ids = $incomingData['itemId'] ?? null;
@@ -89,7 +92,7 @@ class ItemService extends BaseService{
                     "ID Not Exists"
                 );
             }
-            $newItem = $this->createItem($incomingData);
+            $newItem = $this->createObj($incomingData);
             
             $result = $this->itemRepo->save($newItem);
 
@@ -101,7 +104,8 @@ class ItemService extends BaseService{
             return $this->errorMethodHandler();
         }
     }
-    private function createItem(array $incomingData): itemEntity{
+    // to create item.
+    private function createObj(array $incomingData): itemEntity{
         return new itemEntity(
             $incomingData['itemId'],
             $incomingData['itemName'],

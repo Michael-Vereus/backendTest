@@ -34,7 +34,16 @@ class BinService extends BaseService{
         }
     }
     private function test(): array{
-        return [$this->binRepo->test()];
+        $result = "";
+        try {
+            $result = $this->binRepo->test();
+        } catch (Throwable $e) {
+            $result = false;
+        }
+        return $this->getReturnArray(
+            $result,
+            $this->isTrue($result)
+        );
     }
     public function getBin($incomingData): array{
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {

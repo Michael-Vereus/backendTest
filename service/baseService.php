@@ -22,7 +22,7 @@ abstract class BaseService {
         return [
             "status"=>$status,
             "code"=>$code,
-            "data"=>$data ?? []
+            "data"=>$data ?? ["msg"=>"No Data Received"]
         ];
     }
     /**
@@ -32,6 +32,13 @@ abstract class BaseService {
     protected function isTrue(bool $bool): string{
         if($bool){ return "OK";} return "repo_err";
     }
+
+    protected function returnUnknownAction(string $action): array{
+        return [
+            "status"=>false,
+            "action_request"=>$action
+        ];
+    } 
     
 }
 
